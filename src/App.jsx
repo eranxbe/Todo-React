@@ -1,19 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext, createContext } from 'react';
 import './styles.css';
 import { NewTodoForm } from './NewTodoForm';
 import { TodoList } from './TodoList';
 
+const TodosContext = createContext();
+
+export function useTodos(){
+  return useContext(TodosContext);
+}
+
 export default function App() {
-  const [todos, setTodos] = useState(() => {
-    const localValue = localStorage.getItem('ITEMS');
-    if (localValue == null) return [];
-    return JSON.parse(localValue);
-  });
-
-  useEffect(() => {
-    localStorage.setItem('ITEMS', JSON.stringify(todos));
-  }, [todos])
-
+  const [todos, setTodos] = useState([]);
 
   function addTodo(title) {
     setTodos((currentTodos) => {
@@ -43,15 +40,16 @@ export default function App() {
   }
 
   function removeAll() {
-    setTodos(currentTodos => []);
-    localStorage.removeItem('ITEMS');
+    setTodos([]);
   }
  
   return (
-  <>
-    <NewTodoForm onSubmit={addTodo} removeAll={removeAll}/>
-    <h1 className='header'>Todo List</h1>
-    <TodoList todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo}/>
-  </>
+  <TodosContext.Provider value={{todos, addTodo, toggleTodo, deleteTodo, removeAll}} >
+    <>
+      <NewTodoForm onSubmit={addTodo} removeAll={removeAll}/>
+      <h1 className='header'>Todo List</h1>
+      <TodoList todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo}/>
+    </>
+  </TodosContext.Provider>
   )
 }

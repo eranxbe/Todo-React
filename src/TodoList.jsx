@@ -1,6 +1,8 @@
 import { TodoItem } from "./TodoItem"
+import { useTodos } from "./App"
 
-export function TodoList({todos, toggleTodo, deleteTodo}) {
+export function TodoList({todos}) {
+    const {toggleTodo, deleteTodo} = useTodos();
     return (
         <ul className='list'>
         {todos.length === 0 && "No Todos"}
